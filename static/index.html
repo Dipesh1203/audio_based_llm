@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Customer Support Agent</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .card h2 { color: #667eea; margin-bottom: 20px; font-size: 1.8em; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        textarea { min-height: 120px; resize: vertical; }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .response-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .response-box.show { display: block; }
+        .loading { display: none; text-align: center; margin: 20px 0; }
+        .loading.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Audio Customer Support Agent</h1>
+        <div class="card">
+            <h2>💬 Text Query</h2>
+            <div class="form-group">
+                <label for="text-query">Enter your question:</label>
+                <textarea id="text-query" placeholder="e.g., What are your pricing plans?"></textarea>
+            </div>
+            <button onclick="processTextQuery()">Send Query</button>
+            <div class="loading" id="text-loading">Processing...</div>
+            <div class="response-box" id="text-response">
+                <h3>Response:</h3>
+                <div id="text-response-text"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function processTextQuery() {
+            const query = document.getElementById('text-query').value.trim();
+            if (!query) { alert('Please enter a question'); return; }
+            document.getElementById('text-loading').classList.add('show');
+            document.getElementById('text-response').classList.remove('show');
+            try {
+                const response = await fetch('/query/text', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, use_rag: true })
+                });
+                const data = await response.json();
+                document.getElementById('text-response-text').textContent = data.response;
+                document.getElementById('text-response').classList.add('show');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                document.getElementById('text-loading').classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
