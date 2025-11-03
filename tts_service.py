@@ -2,6 +2,7 @@
 
 import edge_tts
 import asyncio
+import time
 from pathlib import Path
 from typing import Union
 from config import Config
@@ -55,7 +56,6 @@ class TTSService:
         """
         if output_path is None:
             # Generate unique filename
-            import time
             timestamp = int(time.time() * 1000)
             output_path = Config.AUDIO_OUTPUT_DIR / f"response_{timestamp}.mp3"
         

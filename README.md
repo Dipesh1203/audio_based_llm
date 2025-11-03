@@ -30,7 +30,7 @@ Audio Input → STT (Whisper) → Text Query → RAG Search (ChromaDB)
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Dipesh1203/audio_based_llm.git
+git clone <repository-url>
 cd audio_based_llm
 ```
 

@@ -14,7 +14,7 @@ Get started with the Audio Customer Support Agent in 5 minutes!
 
 ```bash
 # Clone the repository
-git clone https://github.com/Dipesh1203/audio_based_llm.git
+git clone <repository-url>
 cd audio_based_llm
 
 # Create virtual environment

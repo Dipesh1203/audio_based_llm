@@ -51,7 +51,11 @@ pipeline: Optional[AudioSupportPipeline] = None
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize pipeline on startup."""
+    """
+    Initialize pipeline on startup.
+    Note: Using on_event for compatibility with older FastAPI versions.
+    For newer versions, consider using lifespan context manager.
+    """
     global pipeline
     print("Starting Audio Support Agent API...")
     
