@@ -1,6 +1,7 @@
 """FastAPI-based REST API for the audio support pipeline."""
 
 import os
+import re
 import time
 from pathlib import Path
 from typing import Optional
@@ -305,13 +306,31 @@ async def get_audio_file(filename: str):
     Returns:
         Audio file
     """
+    # Validate filename to prevent path traversal attacks
+    # Only allow alphanumeric characters, hyphens, underscores, and dots
+    if not re.match(r'^[a-zA-Z0-9_\-\.]+$', filename):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    
+    # Prevent directory traversal
+    if '..' in filename or filename.startswith('/'):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    
     file_path = Config.AUDIO_OUTPUT_DIR / filename
     
-    if not file_path.exists():
+    # Ensure the resolved path is within AUDIO_OUTPUT_DIR
+    try:
+        resolved_path = file_path.resolve()
+        audio_dir = Config.AUDIO_OUTPUT_DIR.resolve()
+        if not str(resolved_path).startswith(str(audio_dir)):
+            raise HTTPException(status_code=400, detail="Invalid file path")
+    except (ValueError, OSError):
+        raise HTTPException(status_code=400, detail="Invalid file path")
+    
+    if not resolved_path.exists():
         raise HTTPException(status_code=404, detail="Audio file not found")
     
     return FileResponse(
-        file_path,
+        resolved_path,
         media_type="audio/mpeg",
         filename=filename
     )
